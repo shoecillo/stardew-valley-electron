@@ -16,3 +16,6 @@ log/
 target/
 
 node_modules/
+electron/node_modules/
+electron/node/
+electron/StardewCalc-win32-x64/
