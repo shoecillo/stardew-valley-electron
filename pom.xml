@@ -5,161 +5,55 @@
 	<artifactId>StardewValley-electron</artifactId>
 	<version>0.0.1</version>
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.4.1.RELEASE</version>
-	</parent>
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 	</properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-config</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-eureka</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-mongodb</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.4</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<version>1.10.3</version>
-		</dependency>
-
-
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger2</artifactId>
-			<version>2.4.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger-ui</artifactId>
-			<version>2.4.0</version>
-		</dependency>
-
-
-	</dependencies>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>Brixton.SR5</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 	<profiles>
 		<profile>
-			<id>dev</id>
+			<id>prod</id>
 			<build>
-				<resources>
-					<resource>
-						<filtering>true</filtering>
-						<directory>${basedir}/src/main/resources/</directory>
-						<excludes>
-							<exclude>bootstrap.properties</exclude>
-							<exclude>stardew-calc.properties</exclude>
-						</excludes>
-					</resource>
-				</resources>
 				<plugins>
 					<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy-resources</id>
-						<!-- here the phase you need -->
-						<phase>verify</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+						</executions>
 						<configuration>
-							<outputDirectory>../jars/</outputDirectory>
-							<resources>
-								<resource>
-									<!-- Get main artifact -->
-									<directory>${basedir}/target/</directory>
-									<includes>
-										<include>${build.finalName}.jar</include>
-									</includes>
-									<!-- Don't filter binary files -->
-									<filtering>false</filtering>
-								</resource>
-							</resources>
+							<executable>package.bat</executable>
 						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
 		<profile>
-			<id>prod</id>
+			<id>electron</id>
 			<build>
-				<resources>
-					<resource>
-						<filtering>true</filtering>
-						<directory>${basedir}/src/main/resources/</directory>
-						<excludes>
-							<exclude>application.properties</exclude>
-							<exclude>static/*/**</exclude>
-						</excludes>
-					</resource>
-				</resources>
 				<plugins>
 					<plugin>
-						<groupId>org.springframework.boot</groupId>
-						<artifactId>spring-boot-maven-plugin</artifactId>
+						<groupId>com.github.eirslett</groupId>
+						<artifactId>frontend-maven-plugin</artifactId>
+						<configuration>
+							<workingDirectory>electron</workingDirectory>
+						</configuration>
 						<executions>
 							<execution>
+								<id>npm install</id>
+								<phase>install</phase>
 								<goals>
-									<goal>repackage</goal>
+									<goal>npm</goal>
 								</goals>
 								<configuration>
-									<outputDirectory>C:/DEVELOPMENT/DOCKER/appz/</outputDirectory>
+									<arguments>start</arguments>
 								</configuration>
 							</execution>
 						</executions>
@@ -169,21 +63,19 @@
 		</profile>
 	</profiles>
 
-
 	<build>
-		<finalName>StardewCalc</finalName>
+		<finalName>StardewElectron</finalName>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>com.github.eirslett</groupId>
+					<artifactId>frontend-maven-plugin</artifactId>
+					<version>1.5</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
 		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>repackage</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -192,7 +84,40 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-			
+
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<configuration>
+					<workingDirectory>electron</workingDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<id>install node and npm</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+						<configuration>
+							<nodeVersion>v6.10.0</nodeVersion>
+							<npmVersion>4.3.0</npmVersion>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>npm install</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
 		</plugins>
 	</build>
 

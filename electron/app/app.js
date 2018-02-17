@@ -7,7 +7,7 @@ stardewApp.service("queries", ["$http","$q",function($http,$q) {
 	var vm = this;
 	vm.getAll = function()
 	{
-		return $http.get('api/stardew/getCrops',{ withCredentials : true}).then(function(result)
+		return $http.get('data.json').then(function(result)
 		{
 			return result.data;
 		},
