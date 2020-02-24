@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="css/bootstrap.min.css" rel="stylesheet" />
+<link href="css/master.css" rel="stylesheet" />
+<title>Stardew Valley - Calculadora de cultivos</title>
+
+
+
+</head>
+
+
+
+<body >
+
+
+
+	<div class="container" ng-app="stardew">
+		<div ng-controller="stardewCtrl">
+
+		<div class="row">
+			<div class="col-md-9">
+
+			<div class="row bloque-top">
+				<div class="col-md-3">
+					<img alt="" src="img/Main_Logo.png" width="150px" style="float: left;">
+				</div>
+				<div class="col-md-6">
+					<div class="btn-group pull-right" role="group" aria-label="...">
+						<button type="button" class="btn btn-success" ng-click="filterSeason('all')">Todos</button>
+						<button type="button" class="btn btn-success" ng-click="filterSeason('primavera')">Primavera</button>
+						<button type="button" class="btn btn-success" ng-click="filterSeason('verano')">Verano</button>
+						<button type="button" class="btn btn-success" ng-click="filterSeason('otonio')">Oto&ntilde;o</button>
+					</div>
+				</div>
+				<div class="col-md-3">
+					 <script type="text/ng-template" id="customTemplate.html">
+  					<a>
+      					<img ng-src="img/{{match.model.img}}" width="16">
+      					<span ng-bind-html="match.label | uibTypeaheadHighlight:query"></span>
+  					</a>
+				</script>
+					<div>
+						<!--  <div ng-repeat="item in lsAll">
+							<span><img alt="" ng-src="img/{{item.img}}">{{item.name}}</span>
+						</div> -->
+
+						 <input type="text" ng-model="selected" placeholder="Busca Cultivo"
+						  uib-typeahead="crop as crop.name for crop in lsAll | filter:{name:$viewValue}"
+						  typeahead-template-url="customTemplate.html" class="form-control" typeahead-show-hint="true"
+						  typeahead-min-length="0" typeahead-on-select="onSelect($item, $model, $label)">
+
+					</div>
+				</div>
+			</div>
+			<div class="row bloques" >
+				<div class="col-md-12" style="text-align: center;" ng-show="selected != ''">
+					<h4 ng-show="titulo != ''"><gold-img></gold-img>{{titulo}}<gold-img></gold-img></h4>
+				</div>
+			</div>
+			<div class="row bloques" ng-hide="repVisible || selected == ''" >
+				<div class="col-md-12">
+					<div class="row">
+						<div class="col-md-12">
+							<table class="table table-condensed">
+								<thead>
+									<tr>
+										<th>Imagen</th>
+										<th>Nombre</th>
+										<th style="text-align: right;" ng-hide="selected.buyPierre == null"> Precio Venta</th>
+										<th style="text-align: right;">Precio normal</th>
+										<th style="text-align: right;">Precio Silver&nbsp;<img src="img/Silver_Quality.png" width="16" height="16"></th>
+										<th style="text-align: right;">Precio Gold&nbsp;<img src="img/Gold_Quality.png" width="16" height="16"></th>
+										<th style="text-align: right;">Crecimiento</th>
+										<th style="text-align: right;" ng-hide="selected.produce == null">Produccion</th>
+									</tr>
+								</thead>
+								<tbody ng-show="selected != ''">
+									<tr>
+										<td><img alt="" ng-src="img/{{selected.img}}"></td>
+										<td style="vertical-align: middle;"><span style="font-size: large;">{{selected.name}}</span></td>
+										<td style="text-align: right;vertical-align: middle;" ng-hide="selected.buyPierre == null">{{selected.buyPierre}}<gold-img></gold-img></td>
+										<td style="text-align: right;vertical-align: middle;">{{selected.saleRegular}}<gold-img></gold-img></td>
+										<td style="text-align: right;vertical-align: middle;">{{selected.saleSilver}}<gold-img></gold-img></td>
+										<td style="text-align: right;vertical-align: middle;">{{selected.saleGold}}<gold-img></gold-img></td>
+										<td style="text-align: right;vertical-align: middle;">{{selected.growing}}</td>
+										<td style="text-align: right;vertical-align: middle;" ng-hide="selected.produce == null">{{selected.produce}}</td>
+									</tr>
+								</tbody>
+							</table>
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- wwww -->
+			<div class="row bloques" ng-hide="repVisible || selected != ''" >
+				<div class="col-md-12">
+					<div class="row">
+						<div class="col-md-12" style="height: 500px;overflow: auto;">
+							<table class="table table-condensed">
+								<thead>
+									<tr>
+										<th>Imagen</th>
+										<th>Nombre</th>
+										<th style="text-align: right;"> Precio Venta</th>
+										<th style="text-align: right;">Precio normal</th>
+										<th style="text-align: right;">Precio Silver&nbsp;<img src="img/Silver_Quality.png" width="16" height="16"></th>
+										<th style="text-align: right;">Precio Gold&nbsp;<img src="img/Gold_Quality.png" width="16" height="16"></th>
+										<th style="text-align: right;">Crecimiento</th>
+
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="crop in lsAll" ng-click="selectedItem(crop)" style="cursor: pointer;">
+										<td><img alt="" ng-src="img/{{crop.img}}"></td>
+										<td style="vertical-align: middle;"><span style="font-size: large;">{{crop.name}}</span></td>
+										<td style="text-align: right;vertical-align: middle;" ng-hide="crop.buyPierre == null">{{crop.buyPierre}}<gold-img></gold-img></td>
+										<td style="text-align: right;vertical-align: middle;">{{crop.saleRegular}}<gold-img></gold-img></td>
+										<td style="text-align: right;vertical-align: middle;">{{crop.saleSilver}}<gold-img></gold-img></td>
+										<td style="text-align: right;vertical-align: middle;">{{crop.saleGold}}<gold-img></gold-img></td>
+										<td style="text-align: right;vertical-align: middle;">{{crop.growing}}</td>
+
+									</tr>
+								</tbody>
+							</table>
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- wwww -->
+			<div class="row bloque-bottom" ng-show="selected != '' && repVisible==false">
+				<div class="col-md-12">
+					<form class="form-inline" style="padding-bottom: 10px;">
+					  <div class="form-group">
+					    <input type="number" class="form-control" id="txtTamaField" placeholder="Cantidad semillas" ng-model="tamaField">
+					  </div>
+					  <button class="btn btn-success" ng-click="calcular()" ng-disabled="tamaField <=0 || tamaField == ''">Calcular</button>
+					  <div class="btn-group" role="group" aria-label="...">
+						  <button type="button" class="btn btn-success" ng-click="add24()">+24</button>
+						  <button type="button" class="btn btn-success" ng-click="rem24()">-24</button>
+						</div>
+						<button class="btn btn-success pull-right" ng-click="selected='';tamaField='';report=''">Volver</button>
+					</form>
+					<div  ng-show="selected != '' && repVisible==false" style="padding-top: 5px;">
+						<div style="width: 100%;text-align: center;font-size: larger;">
+							Calendario de recogida
+						</div>
+						<table class="table">
+							<tr>
+								<td ng-repeat="item in calGrow"  ng-class="{cellGrowSel : item.cosecha}" style="border: thin solid white;">
+									<i>
+										{{item.dia}}
+									</i>
+									
+									
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="list-group" ng-show="report != ''" style="padding-top: 20px;margin-bottom : 5px;">
+					  <a href="#" class="list-group-item">
+					    <h5 class="list-group-item-heading" style="color: white;font-weight: bold;">Cantidad de semillas</h5>
+					    <p class="list-group-item-text">{{report.cantidad}}</p>
+					  </a>
+					  <a href="#" class="list-group-item">
+					    <h5 class="list-group-item-heading" style="color: white;font-weight: bold;">Precio de Compra</h5>
+					    <p class="list-group-item-text">{{report.precio}}<gold-img></gold-img></p>
+					  </a>
+					  <a href="#" class="list-group-item">
+					    <h5 class="list-group-item-heading" style="color: white;font-weight: bold;">Precio de Venta Basico</h5>
+					    <p class="list-group-item-text">{{report.ventaBasica}}<gold-img></gold-img></p>
+					  </a>
+					  <a href="#" class="list-group-item">
+					    <h5 class="list-group-item-heading" style="color: white;font-weight: bold;">Rentabilidad(Basica)</h5>
+					    <p class="list-group-item-text">{{report.ventaBasica - report.precio}}<gold-img></gold-img></p>
+					  </a>
+					   <a href="#" class="list-group-item">
+					    <h5 class="list-group-item-heading" style="color: white;font-weight: bold;">Numero de cosechas</h5>
+					    <p class="list-group-item-text">{{report.cosechas}}</p>
+					  </a>
+					  <button class="btn btn-success" ng-click="addCarrito()">Al carrito!</button>
+					</div>
+
+
+
+				</div>
+			</div>
+			<div class="row bloque-bottom" ng-show="repVisible">
+				<div class="col-md-12">
+					<!--  <h4 style="text-align: center;">Resumen</h4> -->
+					<table class="table table-condensed">
+						<thead>
+							<tr>
+								<th>Imagen</th>
+								<th>Nombre</th>
+								<th style="text-align: right;">Cantidad de Semillas</th>
+								<th style="text-align: right;">Precio Compra</th>
+								<th style="text-align: right;">Precio Venta(Basico)</th>
+								<th style="text-align: right;">Rentabilidad(Basica)</th>
+								<th style="text-align: right;">Cosechas</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="item in carrito">
+								<td><img src="img/{{item.img}}"></td>
+								<td style="vertical-align: middle;">{{item.name}}</td>
+								<td style="text-align: right;vertical-align: middle;">{{item.cantidad}}</td>
+								<td style="text-align: right;vertical-align: middle;">{{item.precio}}<gold-img></gold-img></td>
+								<td style="text-align: right;vertical-align: middle;">{{item.ventaBasica}}<gold-img></gold-img></td>
+								<td style="text-align: right;vertical-align: middle;">{{item.ventaBasica - item.precio}}<gold-img></gold-img></td>
+								<td style="text-align: right;vertical-align: middle;">{{item.cosechas}}</td>
+							</tr>
+							<tr style="background-color: #6B8E23">
+								<td colspan="3" style="text-align: right;font-weight: bold;font-size: larger;">Totales:</td>
+								<td style="text-align: right;font-weight: bold;font-size: larger;">{{totales.totalGasto}}<gold-img></gold-img></td>
+								<td style="text-align: right;font-weight: bold;font-size: larger;">{{totales.totalBeneficio}}<gold-img></gold-img></td>
+								<td style="text-align: right;font-weight: bold;font-size: larger;">{{totales.totalRentabilidad}}<gold-img></gold-img></td>
+								<td style="text-align: right;"><a class="btn btn-success btn-xs" ng-click="repVisible=false;titulo = 'Detalles de Semilla'">Volver</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			</div>
+			<div class="col-md-3 carrito" style="padding-top: 30px;padding-bottom: 30px;">
+				<div class="row">
+					<div class="col-md-12">
+						<h4 style="text-align: center;"><gold-img></gold-img><gold-img></gold-img>Carrito<gold-img></gold-img><gold-img></gold-img></h4>
+						<div class="row" ng-repeat="item in carrito">
+							<div class="col-md-12">
+								<a class="btn btn-warning btn-xs" ng-click="remCarrito(item)">Borrar</a>
+								<img alt="" ng-src="img/{{item.img}}">{{item.name}} x {{item.cantidad}} Semillas
+							</div>
+		
+						</div>
+						<div ng-show="carrito == ''" style="text-align: center;">
+							<p>No hay elementos</p>
+						</div>
+						<hr>
+						<button ng-disabled="carrito == ''" class="btn btn-success" style="padding-top: 10px;width: 100%" ng-click="reporteTotal()">Ver Reporte</button>
+					</div>
+				</div>
+				<div class="row" style="padding-top: 25px;" ng-hide="panelGrf">
+					<div class="col-md-12">
+						<form class="form-inline" name="frmAval">
+							<div class="form-group">
+								<input type="text" class="form-control" style="width: 40%;" id="txtAvailable" name="txtAvailable" placeholder="0" ng-model="available" ng-keyup="filtrarNum($event)">
+								<button ng-show="available != ''" class="btn btn-success" ng-click="grafica()">Huecos</button>
+							</div>
+						</form>
+					</div>
+				</div>
+				<div class="row" style="padding-top: 25px;" ng-show="panelGrf">
+					<div class="col-md-12">
+						<div style="width: 100%;text-align: center;font-size: larger;">{{totales.huecos}}/{{available}}</div>
+					</div>
+				</div>
+				<div class="row" style="padding-top: 5px;" ng-show="panelGrf">
+						<div class="col-md-12">
+							<uib-progressbar class="progress-striped active" style="height: 50px;" value="dynamic" type="{{type}}">
+								<div  style="color: black;font-size: 15px;font-weight :bold; ;  padding-top: 15px;">{{dynamic}}&#37;</div>
+							</uib-progressbar>
+							<div style="width: 100%;text-align: center;">
+								<button class="btn btn-success" style="width: 100%" ng-click="panelGrf=false">Redefinir huecos</button>
+							</div>
+						</div>
+					</div>
+			</div>
+				
+		</div>
+	</div>
+
+
+<script type="text/javascript" src="jslib/jquery.min.js"></script>
+<script type="text/javascript" src="jslib/angular.min.js"></script>
+<script type="text/javascript" src="jslib/angular-cookies.min.js"></script>
+<script type="text/javascript" src="jslib/bootstrap.min.js"></script>
+<script type="text/javascript" src="jslib/ui-bootstrap-tpls-2.5.0.min.js"></script>
+
+<script type="text/javascript" src="app/main.js"></script>
+<script type="text/javascript" src="app/app.js"></script>
+</body>
+</html>
